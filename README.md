@@ -109,3 +109,23 @@ location ~ ^(.+\.php)(.*)$ {
 當request為 `/show.php/article/0001` 時 
 SCRIPT_FILENAME = /path/to/php/show.php
 PATH_INFO       = /article/0001
+
+
+## nginx.conf沒有設定的網域名稱卻可以正常顯示
+nginx如果沒有配對的網域名稱，預設會抓第一個server block  
+若要阻止這樣的狀況發生，可加入設定
+```
+http {
+    [...]
+    # Default server
+    server {
+       listen 8080; # 這裡的案例是用8080 port，若不加此行一樣會正常顯示 
+       server_name _;
+       return 404;
+    }
+    # Other servers
+    include /etc/nginx/conf.d/*.conf;
+}
+```
+
+ps:加在nginx.conf 或site.conf都可以，不過一定要是server block的第一個
